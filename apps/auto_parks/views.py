@@ -23,3 +23,8 @@ class AutoParkAddCarView(GenericAPIView):
         serializer.save(auto_park=auto_park)
         ap_serializer = AutoParkSerializer(auto_park)
         return Response(ap_serializer.data, status.HTTP_201_CREATED)
+
+    def get(self, *args, **kwargs):
+        auto_park = self.get_object()
+        serializer = CarSerializer(auto_park.cars, many=True)
+        return Response(serializer.data, status.HTTP_200_OK)
