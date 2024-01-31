@@ -1,12 +1,25 @@
+from django.contrib.auth import get_user_model
+
 from rest_framework import serializers
 
-from apps.auto_parks.serializers import AutoParkWithOutCarsSerializer
-from apps.users.models import UserModel
+UserModel = get_user_model()
 
 
 class UserSerializer(serializers.ModelSerializer):
-    auto_parks = AutoParkWithOutCarsSerializer(many=True, read_only=True)
-
     class Meta:
         model = UserModel
-        fields = ('id', 'name', 'age', 'updated_at', 'created_at', 'auto_parks')
+        fields = (
+            'id', 'email', 'password', 'is_active', 'is_staff', 'is_superuser', 'last_login', 'created_at',
+            'updated_at',
+            'updated_at'
+        )
+        read_only_fields = ('id', 'is_active', 'is_staff', 'is_superuser', 'last_login', 'created_at', 'updated_at')
+        extra_kwargs = {
+            'password': {
+                'write_only': True
+            }
+        }
+
+    def create(self, validated_data):
+        user = UserModel.objects.create_user(**validated_data)
+        return user
