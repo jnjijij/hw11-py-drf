@@ -1,6 +1,7 @@
 from django.core import validators as V
 from django.db import models
 
+from apps.cars.choises.body_type_choices import BodyTypeChoices
 from core.enums.regex_enum import Regex
 from core.models import BaseModel
 
@@ -16,6 +17,6 @@ class CarModel(BaseModel):
     brand = models.CharField(max_length=20, validators=[V.RegexValidator(*Regex.BRAND.value)])
     price = models.IntegerField(validators=[V.MinValueValidator(0), V.MaxValueValidator(100_000)])
     year = models.IntegerField()
-    auto_park = models.ForeignKey(AutoParkModel, on_delete=models.CASCADE, related_name='cars')
+    body_type = models.CharField(max_length=9, choices=BodyTypeChoices.choices)
 
     objects = CarManager()
