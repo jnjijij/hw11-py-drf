@@ -7,6 +7,7 @@ from core.models import BaseModel
 
 from apps.auto_parks.models import AutoParkModel
 from apps.cars.managers import CarManager
+from core.services.file_service import FileService
 
 
 class CarModel(BaseModel):
@@ -18,5 +19,6 @@ class CarModel(BaseModel):
     price = models.IntegerField(validators=[V.MinValueValidator(0), V.MaxValueValidator(100_000)])
     year = models.IntegerField()
     body_type = models.CharField(max_length=9, choices=BodyTypeChoices.choices)
+    photo = models.ImageField(upload_to=FileService.upload_car_photo, blank=True)
 
     objects = CarManager()

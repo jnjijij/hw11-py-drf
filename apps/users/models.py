@@ -4,7 +4,7 @@ from django.db import models
 from core.models import BaseModel
 
 from apps.users.managers import UserManager
-from core.services.upload_avatar import upload_avatar
+from core.services.file_service import FileService
 
 
 class UserModel(AbstractBaseUser, PermissionsMixin, BaseModel):
@@ -28,4 +28,4 @@ class ProfileModel(BaseModel):
     surname = models.CharField(max_length=20)
     age = models.IntegerField()
     user = models.OneToOneField(UserModel, on_delete=models.CASCADE, related_name='profile')
-    avatar = models.ImageField(blank=True, upload_to=upload_avatar)
+    avatar = models.ImageField(blank=True, upload_to=FileService.upload_avatar)
