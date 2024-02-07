@@ -2,9 +2,9 @@ from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.db import models
 
 from core.models import BaseModel
+from core.services.file_service import FileService
 
 from apps.users.managers import UserManager
-from core.services.file_service import FileService
 
 
 class UserModel(AbstractBaseUser, PermissionsMixin, BaseModel):
@@ -13,7 +13,7 @@ class UserModel(AbstractBaseUser, PermissionsMixin, BaseModel):
 
     email = models.EmailField(unique=True)
     password = models.CharField(max_length=128)
-    is_active = models.BooleanField(default=True)
+    is_active = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)
 
     USERNAME_FIELD = 'email'
