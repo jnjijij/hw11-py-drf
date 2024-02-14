@@ -1,12 +1,24 @@
-from rest_framework.generics import ListAPIView, RetrieveUpdateDestroyAPIView, ListCreateAPIView, UpdateAPIView
+from django.utils.decorators import method_decorator
+
+from rest_framework.generics import ListAPIView, ListCreateAPIView, RetrieveUpdateDestroyAPIView, UpdateAPIView
 from rest_framework.permissions import AllowAny
+
+from drf_yasg.utils import swagger_auto_schema
 
 from .filters import CarFilter
 from .models import CarModel
-from .serializers import CarSerializer, CarPhotoSerializer
+from .serializers import CarPhotoSerializer, CarSerializer
 
 
+@method_decorator(name='get', decorator=swagger_auto_schema(security=[]))
+@method_decorator(name='post', decorator=swagger_auto_schema(security=[], operation_id='jkhsdfhksf', operation_summary='create new car!!!'))
 class CarsListCreateView(ListCreateAPIView):
+    """
+        get:
+            List all cars
+        post:
+            Create a new car
+    """
     queryset = CarModel.objects.all()
     serializer_class = CarSerializer
     filterset_class = CarFilter
