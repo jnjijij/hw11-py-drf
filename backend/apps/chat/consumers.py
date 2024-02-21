@@ -2,6 +2,8 @@ from channels.db import database_sync_to_async
 from djangochannelsrestframework.decorators import action
 from djangochannelsrestframework.generics import GenericAsyncAPIConsumer
 
+from apps.chat.models import ChatModel
+
 
 class ChatConsumer(GenericAsyncAPIConsumer):
     def __init__(self, *args, **kwargs):
@@ -26,6 +28,15 @@ class ChatConsumer(GenericAsyncAPIConsumer):
                 'message': f'{self.user_name} connected to chat'
             }
         )
+        for message in await self.get_last_five_messages():
+            await self.channel_layer.group_send(
+                self.room_name,
+                {
+                    'type': 'sender',
+                    'message': message['body'],
+                    'user': message['user']
+                }
+            )
 
     @action()
     async def send_message(self, data, request_id, action):
@@ -37,6 +48,7 @@ class ChatConsumer(GenericAsyncAPIConsumer):
                 'id': request_id
             }
         )
+        await self.save_msg_to_db(data, self.scope['user'])
 
     async def sender(self, data):
         await self.send_json(data)
@@ -45,3 +57,11 @@ class ChatConsumer(GenericAsyncAPIConsumer):
     def get_profile_name(self):
         user = self.scope['user']
         return user.profile.name
+
+    @database_sync_to_async
+    def save_msg_to_db(self, body, user):
+        ChatModel.objects.create(body=body, user=user)
+
+    @database_sync_to_async
+    def get_last_five_messages(self):
+        return [{'body': item.body, 'user': item.user.profile.name} for item in ChatModel.objects.order_by('id')[:5]]
